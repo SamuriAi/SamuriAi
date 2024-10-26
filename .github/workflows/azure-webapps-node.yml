@@ -53,9 +53,18 @@ jobs:
       with:
         name: node-app
         path:            
-        - name: Setup Node.js environment
-  uses: actions/setup-node@v4.1.0
-  with:
+        
+    deploy:
+    permissions:
+      contents: none
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: 'Development'
+      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+ - name: Setup Node.js environment
+      uses: actions/setup-node@v4.1.0
+      with:
     # Set always-auth in npmrc.
     always-auth: # optional, default is false
     # Version Spec of the version to use. Examples: 12.x, 10.15.1, >=10.15.0.
@@ -76,17 +85,6 @@ jobs:
     cache: # optional
     # Used to specify the path to a dependency file: package-lock.json, yarn.lock, etc. Supports wildcards or a list of file names for caching multiple dependencies.
     cache-dependency-path: # optional
-          
-
-  deploy:
-    permissions:
-      contents: none
-    runs-on: ubuntu-latest
-    needs: build
-    environment:
-      name: 'Development'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-
     steps:
     - name: Download artifact from build job
       uses: actions/download-artifact@v3
